@@ -17,7 +17,6 @@ def test_good_leafs_number(
 
     # then
     assert tree._leafs_number == elements_number
-    # assert len(tree.leafs) == leafs_number
 
 
 @pytest.mark.parametrize(

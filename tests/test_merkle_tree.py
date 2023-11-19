@@ -33,7 +33,7 @@ def test_leafs_hashes(leafs: list[tuple[int]], encoded_leafs: list[bytes]) -> No
 def check_last_leaf_duplication(leafs_number: int, duplication_number: int) -> None:
     # given
     leafs = [(1,) * (leafs_number - 1)] + [(2,)]
-    encoded_duplicat = (
+    encoded_duplicate = (
         "1ab0c6948a275349ae45a06aad66a8bd65ac18074615d53676c09b67809099e0"
     )
 
@@ -41,7 +41,7 @@ def check_last_leaf_duplication(leafs_number: int, duplication_number: int) -> N
     merkle = MerkleTree(leafs, ["int256"])
 
     # then
-    assert all(encoded_duplicat == leaf.hex() for leaf in merkle.leafs[len(leafs) :])
+    assert all(encoded_duplicate == leaf.hex() for leaf in merkle.leafs[len(leafs) :])
 
 
 @pytest.mark.parametrize(

@@ -23,7 +23,7 @@ class BinaryTree(ABC, Generic[T]):
 
     @property
     def leafs(self) -> list[T]:
-        return self._nodes[self._inner_nodes_number :]
+        return self._nodes[-self._leafs_number :]
 
     @abstractmethod
     def _calculate_parent_value(self, left_children: T, right_children: T) -> T:
