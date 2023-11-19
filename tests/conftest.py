@@ -1,4 +1,4 @@
-from typing import TypeVar
+from typing import Type, TypeVar
 
 import pytest
 
@@ -8,9 +8,9 @@ T = TypeVar("T")
 
 
 @pytest.fixture
-def max_tree_class():
+def max_tree_class() -> Type[BinaryTree]:
     class TestTree(BinaryTree):
-        def _calculate_parent_value(self, left_children: T, right_children: T) -> T:
-            return max(left_children, right_children)
+        def _calculate_parent_value(self, left_child: T, right_child: T) -> T:
+            return max(left_child, right_child)
 
     return TestTree

@@ -4,7 +4,7 @@ from merkle_zeppelin import MerkleTree
 
 
 @pytest.mark.parametrize(
-    "leafs, encoded_leafs",
+    "leaves, encoded_leaves",
     [
         (
             [(1,), (2,), (3,), (4,), (5,)],
@@ -19,33 +19,35 @@ from merkle_zeppelin import MerkleTree
         ([(1,)], ["b5d9d894133a730aa651ef62d26b0ffa846233c74177a591a4a896adfda97d22"]),
     ],
 )
-def test_leafs_hashes(leafs: list[tuple[int]], encoded_leafs: list[bytes]) -> None:
+def test_leaves_hashes(leaves: list[tuple[int]], encoded_leaves: list[bytes]) -> None:
     # when
-    merkle = MerkleTree(leafs, ["int256"])
+    merkle = MerkleTree(leaves, ["int256"])
 
     # then
-    assert [leaf.hex() for leaf in merkle.leafs[: len(encoded_leafs)]] == encoded_leafs
+    assert [
+        leaf.hex() for leaf in merkle.leaves[: len(encoded_leaves)]
+    ] == encoded_leaves
 
 
 @pytest.mark.parametrize(
-    "leafs_number, duplication_number", [(3, 1), (5, 3), (1, 0), (9, 7)]
+    "leaves_number, duplication_number", [(3, 1), (5, 3), (1, 0), (9, 7)]
 )
-def check_last_leaf_duplication(leafs_number: int, duplication_number: int) -> None:
+def check_last_leaf_duplication(leaves_number: int, duplication_number: int) -> None:
     # given
-    leafs = [(1,) * (leafs_number - 1)] + [(2,)]
+    leaves = [(1,) * (leaves_number - 1)] + [(2,)]
     encoded_duplicate = (
         "1ab0c6948a275349ae45a06aad66a8bd65ac18074615d53676c09b67809099e0"
     )
 
     # when
-    merkle = MerkleTree(leafs, ["int256"])
+    merkle = MerkleTree(leaves, ["int256"])
 
     # then
-    assert all(encoded_duplicate == leaf.hex() for leaf in merkle.leafs[len(leafs) :])
+    assert all(encoded_duplicate == leaf.hex() for leaf in merkle.leaves[len(leaves) :])
 
 
 @pytest.mark.parametrize(
-    "proofs, leafs, leaf_to_get_proof",
+    "proofs, leaves, leaf_to_get_proof",
     [
         (
             [
@@ -77,14 +79,14 @@ def check_last_leaf_duplication(leafs_number: int, duplication_number: int) -> N
     ],
 )
 def test_proofs(
-    proofs: list[str], leafs: list[tuple[int, bool]], leaf_to_get_proof: int
+    proofs: list[str], leaves: list[tuple[int, bool]], leaf_to_get_proof: int
 ) -> None:
     # given
     types = ["int256", "bool"]
-    tree = MerkleTree(leafs, types)
+    tree = MerkleTree(leaves, types)
 
     # when
-    retrieved_proofs = tree.get_proofs(leafs[leaf_to_get_proof])
+    retrieved_proofs = tree.get_proofs(leaves[leaf_to_get_proof])
 
     # then
     assert [proof.hex() for proof in retrieved_proofs] == proofs
@@ -92,15 +94,15 @@ def test_proofs(
 
 def test_one_node() -> None:
     # given
-    leafs = [(1,)]
+    leaves = [(1,)]
     encoded_leaf = "b5d9d894133a730aa651ef62d26b0ffa846233c74177a591a4a896adfda97d22"
 
     # when
-    tree = MerkleTree(leafs, ["int256"])
+    tree = MerkleTree(leaves, ["int256"])
 
     # then
     assert tree.root.hex() == encoded_leaf
-    assert [leaf.hex() for leaf in tree.leafs] == [encoded_leaf]
+    assert [leaf.hex() for leaf in tree.leaves] == [encoded_leaf]
 
 
 def test_empty_nodes() -> None:
@@ -116,6 +118,5 @@ def test_empty_nodes() -> None:
     # then
     assert validation
     assert tree.root is None
-    assert tree.leafs == []
-    assert tree.hashed_leafs == []
+    assert tree.leaves == []
     assert proof_exception.value.args[0] == leaf

@@ -6,21 +6,21 @@ from merkle_zeppelin import BinaryTree
 
 
 @pytest.mark.parametrize("elements_number", [1, 2, 3, 4, 5, 6, 9, 1025, 2049])
-def test_good_leafs_number(
+def test_good_leaves_number(
     elements_number: int, max_tree_class: Type[BinaryTree]
 ) -> None:
     # given
-    leafs = [x for x in range(elements_number)]
+    leaves = [x for x in range(elements_number)]
 
     # when
-    tree = max_tree_class(leafs)
+    tree = max_tree_class(leaves)
 
     # then
-    assert tree._leafs_number == elements_number
+    assert tree._leaves_number == elements_number
 
 
 @pytest.mark.parametrize(
-    "leafs",
+    "leaves",
     [
         [1, 2, 5, 4, 3],
         [26472, 10667, 22111, 19925, 15135, 25522, 19383, 18057],
@@ -35,25 +35,25 @@ def test_good_leafs_number(
         [5564, 3366, 13713, 15915, 27151, 5527, 14180, 27597],
     ],
 )
-def test_tree_root(leafs: list[int], max_tree_class: Type[BinaryTree]) -> None:
+def test_tree_root(leaves: list[int], max_tree_class: Type[BinaryTree]) -> None:
     # when
-    tree = max_tree_class(leafs)
+    tree = max_tree_class(leaves)
 
     # then
-    assert tree.root == max(leafs)
+    assert tree.root == max(leaves)
 
 
 def test_one_node(max_tree_class: Type[BinaryTree]) -> None:
     # given
     leaf = 1
-    leafs = [leaf]
+    leaves = [leaf]
 
     # when
-    tree = max_tree_class(leafs)
+    tree = max_tree_class(leaves)
 
     # then
     assert tree.root == leaf
-    assert len(tree.leafs) == 1
+    assert len(tree.leaves) == 1
 
 
 def test_empty_nodes(max_tree_class: Type[BinaryTree]) -> None:
@@ -62,4 +62,4 @@ def test_empty_nodes(max_tree_class: Type[BinaryTree]) -> None:
 
     # then
     assert tree.root is None
-    assert tree.leafs == []
+    assert tree.leaves == []
