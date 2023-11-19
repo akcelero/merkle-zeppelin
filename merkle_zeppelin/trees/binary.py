@@ -19,7 +19,7 @@ class BinaryTree(ABC, Generic[T]):
 
     @property
     def root(self) -> T | None:
-        return self._nodes[0] if len(self._nodes) else None
+        return self._nodes[0] if self._nodes else None
 
     @property
     def leafs(self) -> list[T]:
