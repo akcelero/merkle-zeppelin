@@ -27,7 +27,7 @@ class BinaryTree(ABC, Generic[T]):
 
     @abstractmethod
     def _calculate_parent_value(self, left_children: T, right_children: T) -> T:
-        pass
+        ...
 
     @cached_property
     def _leafs_number(self) -> int:
