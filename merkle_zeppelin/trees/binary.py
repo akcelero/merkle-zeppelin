@@ -18,7 +18,7 @@ class BinaryTree(ABC, Generic[T]):
         return self._leafs_number - 1
 
     @property
-    def root(self) -> T:
+    def root(self) -> T | None:
         return self._nodes[0] if len(self._nodes) else None
 
     @property
