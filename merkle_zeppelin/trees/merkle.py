@@ -6,27 +6,36 @@ from eth_abi import encode
 from .binary import BinaryTree
 from .exceptions import MerkleTreeValidationFailed, ValueNotFoundInTree
 
+Leaf = tuple[Any, ...]
+
 
 def keccak256(v: bytes) -> bytes:
     return keccak.new(data=v, digest_bits=256).digest()
 
 
 class MerkleTree(BinaryTree[bytes]):
-    _raw_leafs: list[list[Any]]
+    _raw_leafs_index: dict[Leaf, int]
     _hashing_function: Callable[[bytes], bytes]
     _types: list[str]
 
     def __init__(
         self,
-        leafs: list[list[Any]],
+        leafs: list[Leaf],
         types: list[str],
         hashing_function: Callable[[bytes], bytes] = None,
     ) -> None:
         self._hashing_function = hashing_function or keccak256
         self._types = types
-        self._raw_leafs, hashed_leafs = self._get_leafs_data(leafs)
 
-        super().__init__(hashed_leafs)
+        hash_leaf_pairs = self._get_hash_leaf_pairs(leafs)
+        hash_leaf_pairs.sort(reverse=True)
+
+        ordered_hashed_leafs = [leaf_hash for leaf_hash, _ in hash_leaf_pairs]
+        ordered_leafs = [leaf for _, leaf in hash_leaf_pairs]
+
+        super().__init__(ordered_hashed_leafs)
+
+        self._raw_leafs_index = self._get_raw_leafs_index(ordered_leafs)
 
     @property
     def hashed_leafs(self) -> list[bytes]:
@@ -48,10 +57,9 @@ class MerkleTree(BinaryTree[bytes]):
 
         return True
 
-    def get_proofs(self, value: list[Any]) -> list[bytes] | None:
-        encoded_leaf = self._calculate_leaf_hash(value)
+    def get_proofs(self, value: Leaf) -> list[bytes] | None:
         try:
-            node_index = self._nodes.index(encoded_leaf)
+            node_index = self._raw_leafs_index[value]
         except ValueError:
             raise ValueNotFoundInTree(value)
 
@@ -64,26 +72,19 @@ class MerkleTree(BinaryTree[bytes]):
 
         return result
 
-    def _calculate_leaf_hash(self, value: list[Any]) -> bytes:
+    def _calculate_leaf_hash(self, value: Leaf) -> bytes:
         return self._hashing_function(
             self._hashing_function(encode(self._types, value))
         )
 
-    def _get_leafs_data(self, leafs: list[list[Any]]) -> tuple[list[Any], list[bytes]]:
-        if not leafs:
-            return [], []
+    def _get_hash_leaf_pairs(self, input_leafs: list[Leaf]) -> list[tuple[bytes, Leaf]]:
+        return [(self._calculate_leaf_hash(leaf), leaf) for leaf in input_leafs]
 
-        leafs_with_hashes = [(self._calculate_leaf_hash(leaf), leaf) for leaf in leafs]
-        leafs_with_hashes.sort(reverse=True)
-
-        sorted_hashes, sorted_leafs = zip(*leafs_with_hashes)
-
-        return list(sorted_leafs), list(sorted_hashes)
+    def _get_raw_leafs_index(self, hash_leaf_pairs: list[Leaf]) -> dict[Leaf, int]:
+        return {leaf: self._get_node_index(i) for i, leaf in enumerate(hash_leaf_pairs)}
 
     def _calculate_parent_value(
         self, left_children: bytes, right_children: bytes
     ) -> bytes:
-        if None in (left_children, right_children):
-            return left_children or right_children
         children_1, children_2 = sorted([left_children, right_children])
         return self._hashing_function(children_1 + children_2)

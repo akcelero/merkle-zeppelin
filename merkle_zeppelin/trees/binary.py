@@ -33,6 +33,9 @@ class BinaryTree(ABC, Generic[T]):
     def _leafs_number(self) -> int:
         return (len(self._nodes) + 1) // 2
 
+    def _get_node_index(self, leaf_index) -> int:
+        return leaf_index + self._inner_nodes_number
+
     def _build_tree(self) -> None:
         reversed_tree = self._nodes[::-1]
         i = 0
