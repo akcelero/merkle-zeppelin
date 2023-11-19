@@ -1,12 +1,15 @@
-from typing import Any, Callable, Union
+from __future__ import annotations
+
+from typing import Any, Callable, Type, Union
 
 from Crypto.Hash import keccak
 from eth_abi import encode
 
+from ..data_io.base_exporter import MerkleTreeExporter
+from ..data_io.base_importer import MerkleTreeImporter
+from ..data_io.dto import Leaf, LeafValueDTO, MerkleTreeDTO
 from .binary import BinaryTree
 from .exceptions import MerkleTreeValidationFailed, ValueNotFoundInTree
-
-Leaf = tuple[Any, ...]
 
 
 def keccak256(v: bytes) -> bytes:
@@ -31,17 +34,64 @@ class MerkleTree(BinaryTree[bytes]):
 
         super().__init__(ordered_hashed_leaves)
 
-        self._raw_leaves_index = self._get_raw_leaves_index(ordered_leaves)
+        self._raw_leaves_index = self._get_raw_leaves_index(ordered_leaves, leaves)
+
+    @staticmethod
+    def get_hash_from_string(node_hash: str) -> bytes:
+        if node_hash.startswith("0x"):
+            node_hash = node_hash[2:]
+
+        return bytes.fromhex(node_hash)
+
+    @classmethod
+    def import_tree(
+        cls,
+        data: Any,
+        importer: Type[MerkleTreeImporter],
+        validate: bool = True,
+        hashing_function: Callable[[bytes], bytes] = None,
+    ) -> MerkleTree:
+        imported_data = importer.import_tree(data)
+        obj = cls.__new__(cls)
+        obj._hashing_function = hashing_function or keccak256
+        obj._nodes = [
+            cls.get_hash_from_string(node_hash) for node_hash in imported_data.tree
+        ]
+        obj._types = imported_data.leaf_encoding
+        obj._raw_leaves_index = {
+            value.value: value.tree_index for value in imported_data.values
+        }
+
+        if validate:
+            cls.validate(obj)
+
+        return obj
+
+    @property
+    def hashed_leaves(self) -> list[bytes]:
+        return self._nodes[self._inner_nodes_number :]
+
+    @property
+    def dto(self) -> MerkleTreeDTO:
+        return MerkleTreeDTO(
+            tree=[f"0x{node.hex()}" for node in self._nodes],
+            values=[
+                LeafValueDTO(value=value, treeIndex=index)
+                for value, index in self._raw_leaves_index.items()
+            ],
+            leafEncoding=self._types,
+        )
+
+    def export_tree(self, exporter: Type[MerkleTreeExporter]) -> Any:
+        return exporter.export_tree(self.dto)
 
     def validate(self, raise_exception: bool = True) -> bool:
-        for i in range(1, self._inner_nodes_number):
-            left_node_index = self._get_left_child_index(i)
-            right_node_index = self._get_right_child_index(i)
+        for checked, i in enumerate(range(len(self._nodes) - 1, 0, -2)):
             calculated_parent = self._calculate_parent_value(
-                self._nodes[left_node_index], self._nodes[right_node_index]
+                self._nodes[i], self._nodes[i - 1]
             )
 
-            if self._nodes[i] != calculated_parent:
+            if self._nodes[self._inner_nodes_number - checked - 1] != calculated_parent:
                 if not raise_exception:
                     return False
 
@@ -74,8 +124,13 @@ class MerkleTree(BinaryTree[bytes]):
     ) -> list[tuple[bytes, Leaf]]:
         return [(self._calculate_leaf_hash(leaf), leaf) for leaf in input_leaves]
 
-    def _get_raw_leaves_index(self, hash_leaf_pairs: list[Leaf]) -> dict[Leaf, int]:
-        return {leaf: self._get_node_index(i) for i, leaf in enumerate(hash_leaf_pairs)}
+    def _get_raw_leaves_index(
+        self, hash_leaf_pairs: list[Leaf], input_leaves: list[Leaf]
+    ) -> dict[Leaf, int]:
+        mapping = {
+            leaf: self._get_node_index(i) for i, leaf in enumerate(hash_leaf_pairs)
+        }
+        return {leaf: mapping[leaf] for leaf in input_leaves}
 
     def _calculate_parent_value(self, left_child: bytes, right_child: bytes) -> bytes:
         child_1, child_2 = sorted([left_child, right_child])
