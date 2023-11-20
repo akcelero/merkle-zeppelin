@@ -5,7 +5,7 @@ from merkle_zeppelin import MerkleTree, MerkleTreeJSONExporter
 from .example import json_dump, leafs
 
 
-def test_json_export():
+def test_json_export() -> None:
     # when
     tree = MerkleTree(leafs, ["int256", "bool"])
 
