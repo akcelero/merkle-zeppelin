@@ -5,7 +5,7 @@ from merkle_zeppelin import MerkleTree, MerkleTreeJSONImporter
 from .example import json_dump, leafs
 
 
-def test_json_import():
+def test_json_import() -> None:
     # when
     tree = MerkleTree.import_tree(json_dump, MerkleTreeJSONImporter, validate=True)
 
