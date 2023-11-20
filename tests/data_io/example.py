@@ -4,7 +4,8 @@ leafs = [
     (42386, True),
 ]
 
-json_dump = {
+json_dump = """
+{
     "format": "standard-v1",
     "tree": [
         "0x045578d5e654c3f10fecce520b17f5b8073630bf780db850721b1a8a5df3b839",
@@ -20,3 +21,4 @@ json_dump = {
     ],
     "leafEncoding": ["int256", "bool"],
 }
+"""
