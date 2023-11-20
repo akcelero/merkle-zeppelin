@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from functools import cached_property
-from typing import Generic, TypeVar
+from typing import Generic, TypeVar, Union
 
 T = TypeVar("T")
 
@@ -19,7 +19,7 @@ class BinaryTree(ABC, Generic[T]):
         return self._leaves_number - 1
 
     @property
-    def root(self) -> T | None:
+    def root(self) -> Union[T, None]:
         return self._nodes[0] if self._nodes else None
 
     @property

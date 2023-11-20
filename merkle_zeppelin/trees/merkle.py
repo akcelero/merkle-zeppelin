@@ -1,4 +1,4 @@
-from typing import Any, Callable
+from typing import Any, Callable, Union
 
 from Crypto.Hash import keccak
 from eth_abi import encode
@@ -49,7 +49,7 @@ class MerkleTree(BinaryTree[bytes]):
 
         return True
 
-    def get_proofs(self, value: Leaf) -> list[bytes] | None:
+    def get_proofs(self, value: Leaf) -> Union[list[bytes], None]:
         try:
             node_index = self._raw_leaves_index[value]
         except ValueError:

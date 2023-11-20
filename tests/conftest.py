@@ -7,7 +7,7 @@ from merkle_zeppelin import BinaryTree
 T = TypeVar("T")
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def max_tree_class() -> Type[BinaryTree]:
     class TestTree(BinaryTree):
         def _calculate_parent_value(self, left_child: T, right_child: T) -> T:

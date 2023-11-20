@@ -1,3 +1,5 @@
+import pathlib
+
 from setuptools import find_packages, setup
 
 requirements = ["pycryptodome>=3.0.0", "eth-abi>=4.0.0"]
@@ -9,19 +11,31 @@ tests_requirements = ["pytest-cov>=4.0.0", "pytest>=7.0.0"]
 all_requirements = pydantic_requirements
 
 
-VERSION = "0.1.0"
-DESCRIPTION = "MerkleTree implementation"
-LONG_DESCRIPTION = "Yet another package for MerkleTree, this time compatible with OpenZeppelin implementation"
+# Load the package's metadata from __version__.py
+here = pathlib.Path(__file__).parent.resolve()
+about: dict[str, str] = {}
+with (here / "merkle_zeppelin" / "__version__.py").open() as f:
+    exec(f.read(), about)
+
+# Get the long description from the README file
+long_description = (here / "README.md").read_text(encoding="utf-8")
+
 
 setup(
-    name="merkle-zeppelin",
-    version=VERSION,
-    description=DESCRIPTION,
-    long_description=LONG_DESCRIPTION,
-    author="akcelero",
-    author_email="akcelero@gmail.com",
+    name=about["__name__"],
+    version=about["__version__"],
+    description=about["__description__"],
+    long_description=long_description,
+    long_description_content_type="text/markdown",
+    author=about["__author__"],
+    author_email=about["__email__"],
+    url=about["__url__"],
     license="MIT",
     packages=find_packages(),
+    package_data={
+        # PEP-0561: https://www.python.org/dev/peps/pep-0561/#packaging-type-information
+        "merkle_zeppelin": ["py.typed"],
+    },
     install_requires=requirements,
     tests_requires=tests_requirements,
     keywords="merkle tree merkletree openzeppelin",
