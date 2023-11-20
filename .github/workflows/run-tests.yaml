@@ -11,11 +11,6 @@ jobs:
         python-version: ["3.9", "3.10", "3.11", "3.12"]
         os: ["ubuntu-latest"]
 
-    defaults:
-      run:
-        shell: bash
-        working-directory: .
-
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4.1.1
@@ -27,15 +22,13 @@ jobs:
 
       - name: Install dependencies
         if: steps.cache-venv.outputs.cache-hit != 'true'
-        run: |
-          pip install ".[test]"
+        run: pip install ".[test]"
 
       - name: Test with pytest
-        run: |
-          python -m pytest --junitxml=pytest.xml --cov=merkle_zeppelin | tee pytest-result.txt
+        run: python -m pytest --junitxml=pytest.xml --cov=merkle_zeppelin | tee pytest-result.txt
 
       - name: Make comment with test coverage
-        uses: MishaKav/pytest-coverage-comment@main
+        uses: MishaKav/pytest-coverage-comment@v1.1.49
         if: github.event_name != 'dependabot[bot]'
         with:
           pytest-coverage-path: ./pytest-result.txt
