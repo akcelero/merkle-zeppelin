@@ -49,7 +49,7 @@ class MerkleTree(BinaryTree[bytes]):
         data: Any,
         importer: Type[MerkleTreeImporter],
         validate: bool = True,
-        hashing_function: Callable[[bytes], bytes] = None,
+        hashing_function: typing.Optional[Callable[[bytes], bytes]] = None,
     ) -> MerkleTree:
         imported_data = importer.import_tree(data)
         obj = cls.__new__(cls)
