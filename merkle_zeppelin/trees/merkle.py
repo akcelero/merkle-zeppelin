@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from operator import itemgetter
-from typing import Any, Callable, Type, Union
+from typing import Any, Callable, Optional, Type, Union
 
 from Crypto.Hash import keccak
 from eth_abi import encode
@@ -22,7 +22,7 @@ class MerkleTree(BinaryTree[bytes]):
         self,
         raw_elements: list[Leaf],
         types: list[str],
-        hashing_function: Callable[[bytes], bytes] = None,
+        hashing_function: Optional[Callable[[bytes], bytes]] = None,
     ) -> None:
         self._hashing_function = hashing_function or keccak256
         self._types = types
@@ -49,17 +49,25 @@ class MerkleTree(BinaryTree[bytes]):
         data: Any,
         importer: Type[MerkleTreeImporter],
         validate: bool = True,
-        hashing_function: typing.Optional[Callable[[bytes], bytes]] = None,
+        hashing_function: Optional[Callable[[bytes], bytes]] = None,
     ) -> MerkleTree:
-        imported_data = importer.import_tree(data)
+        dto = importer.import_tree(data)
+        return cls.import_tree_from_dto(dto, validate, hashing_function)
+
+    @classmethod
+    def import_tree_from_dto(
+        cls,
+        dto: MerkleTreeDTO,
+        validate: bool = True,
+        hashing_function: Optional[Callable[[bytes], bytes]] = None,
+    ) -> MerkleTree:
         obj = cls.__new__(cls)
+        obj._types = dto.leaf_encoding
         obj._hashing_function = hashing_function or keccak256
-        obj._nodes = [
-            cls.get_hash_from_string(hash_str) for hash_str in imported_data.tree
-        ]
-        obj._types = imported_data.leaf_encoding
+
+        obj._nodes = [cls.get_hash_from_string(hash_str) for hash_str in dto.tree]
         obj._raw_to_leaves_index_mapping = {
-            value.value: value.tree_index for value in imported_data.values
+            value.value: value.tree_index for value in dto.values
         }
 
         if validate:
@@ -105,8 +113,6 @@ class MerkleTree(BinaryTree[bytes]):
 
         return True
 
-    # 1470,20 + 4965 = 6445.20
-
     def get_proofs(self, value: Leaf) -> Union[list[bytes], None]:
         try:
             node_index = self._raw_to_leaves_index_mapping[value]
@@ -115,7 +121,6 @@ class MerkleTree(BinaryTree[bytes]):
 
         result = []
         while node_index != 0:
-            print(node_index)
             neighbor_index = self._get_neighbor_index(node_index)
             result.append(self._nodes[neighbor_index])
 
@@ -140,7 +145,7 @@ class MerkleTree(BinaryTree[bytes]):
         elements_number = len(raw_elements)
 
         related_indexed_when_sorted = sorted(
-            range(elements_number), key=ordered_hashed_leaves.__getitem__
+            range(elements_number), key=lambda i: ordered_hashed_leaves[i]
         )
 
         return {
