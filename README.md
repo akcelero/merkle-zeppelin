@@ -43,5 +43,5 @@ proofs = [A, E, CD]
 1. Hash the value `b` to get `B`.
 2. Combine `B` with the first proof and hash result: `hash(A + B) = AB`.
 3. Combine `AB` with the second proof and hash result: `hash(AB + E) = ABE`.
-4. Combine `ABE` with the third proof and hash result: `hash(ABE + CD) = ABCDE`, which is the *calculated root*.
+4. Combine `ABE` with the third proof and hash result: `hash(ABE + CD) = ABECD`, which is the *calculated root*.
 5. If the *calculated root* matches the stored root value, it confirms that the value `b` is part of the tree.
