@@ -36,7 +36,7 @@ The proofs are the sibling values collected on this path.
 ### Verifying Proofs
 
 To verify proofs, you only need the root value. For example:
-```
+```python
 value = b
 proofs = [A, E, CD]
 ```
