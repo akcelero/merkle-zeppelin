@@ -32,7 +32,7 @@ jobs:
         run: python -m pytest --junitxml=pytest.xml --cov=merkle_zeppelin | tee pytest-result.txt
 
       - name: Make comment with test coverage
-        uses: MishaKav/pytest-coverage-comment@v1.1.52
+        uses: MishaKav/pytest-coverage-comment@v1.1.53
         if: github.event_name != 'dependabot[bot]'
         with:
           pytest-coverage-path: ./pytest-result.txt
