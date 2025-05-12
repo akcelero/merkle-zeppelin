@@ -8,28 +8,28 @@ permissions:
 
 jobs:
   build:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      max-parallel: 4
-      matrix:
-        python-version: ["3.9", "3.10", "3.11", "3.12"]
-        os: ["ubuntu-latest"]
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4.2.2
 
-      - name: Set up Python ${{ matrix.python-version }}
+      - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version-file: ".python-version"
+
+      - name: Install the latest version of uv
+        uses: astral-sh/setup-uv@v6
 
       - name: Install dependencies
-        if: steps.cache-venv.outputs.cache-hit != 'true'
-        run: pip install ".[test]"
+        run: uv sync
+
+      - name: Install package in editable mode
+        run: uv pip install -e .
 
       - name: Test with pytest
-        run: python -m pytest --junitxml=pytest.xml --cov=merkle_zeppelin | tee pytest-result.txt
+        run: uv run pytest --junitxml=pytest.xml --cov=merkle_zeppelin | tee pytest-result.txt
 
       - name: Make comment with test coverage
         uses: MishaKav/pytest-coverage-comment@v1.1.54

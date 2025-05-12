@@ -1,0 +1,59 @@
+[project]
+name = "merkle-zeppelin"
+dynamic = ["version"]
+description = "MerkleTree implementation"
+readme = "README.md"
+requires-python = ">=3.9"
+authors = [{ name = "akcelero", email = "akcelero@gmail.com" }]
+license = "MIT"
+keywords = ["merkle", "tree", "merkletree", "openzeppelin"]
+dependencies = ["pycryptodome>=3.0.0", "eth-abi>=4.0.0", "pydantic>=2.11.4"]
+classifiers = [
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Utilities",
+]
+
+[project.urls]
+Homepage = "https://github.com/akcelero/merkle-zeppelin"
+Repository = "https://github.com/akcelero/merkle-zeppelin"
+Issues = "https://github.com/akcelero/merkle-zeppelin/issues"
+
+[build-system]
+requires = ["hatchling", "uv-dynamic-versioning"]
+build-backend = "hatchling.build"
+
+[tool.hatch.version]
+source = "uv-dynamic-versioning"
+
+[tool.uv]
+dev-dependencies = ["pytest>=8.3.5", "pytest-mock>=3.14.0", "ruff>=0.11.8"]
+
+[[tool.uv.index]]
+name = "test-pypi"
+url = "https://test.pypi.org/simple/"
+publish-url = "https://test.pypi.org/legacy/"
+explicit = true
+
+[[tool.uv.index]]
+name = "pypi"
+url = "https://pypi.org/simple/"
+publish-url = "https://upload.pypi.org/legacy/"
+explicit = true
+
+[tool.pytest.ini_options]
+addopts = "--maxfail=2 -rf"
+console_output_style = "progress"
+minversion = "8.0.0"
+testpaths = ["tests/"]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true
+exclude_lines = ["def __str__", "pragma: no cover"]
