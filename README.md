@@ -23,7 +23,8 @@ This algorithm is particularly valuable when saving storage space is more import
 ### How the Tree is Constructed
 The animation demonstrates the algorithm constructing a tree for proof verification or calculation. The letters at the bottom represent a list of items stored in the program's memory.
 
-![Constructing the tree](images/tree_construction.gif)
+![Constructing the tree](https://raw.githubusercontent.com/akcelero/merkle-zeppelin/refs/heads/master/images/tree_construction.gif)
+
 
 Note that dividing the number of each node in the final tree by 2 (without remainder) identifies its parent node. The `None` placeholder ensures the first element is indexed at 1, not 0, maintaining this parent-child relationship.
 
@@ -34,7 +35,7 @@ This library allows selection of the hash function, with `keccak256` set as the 
 ### Collecting Proofs
 Consider the example below:
 
-![Collecting proofs](images/collect_proofs.gif)
+![Collecting proofs](https://raw.githubusercontent.com/akcelero/merkle-zeppelin/refs/heads/master/images/collect_proofs.gif)
 
 To collect proofs for a specific value, locate the leaf containing the hash of that value. Collect the sibling's value, move up to the parent node, and repeat until you reach the root.
 
