@@ -4,8 +4,7 @@ from typing import Any
 from .dto import MerkleTreeDTO
 
 
-class MerkleTreeImporter(ABC):
+class MerkleTreeExporter(ABC):
     @staticmethod
     @abstractmethod
-    def import_tree(data: Any) -> MerkleTreeDTO:
-        ...
+    def export_tree(data: MerkleTreeDTO) -> Any: ...

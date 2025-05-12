@@ -6,11 +6,11 @@ from typing import Any, Callable, Optional, Type, Union
 from Crypto.Hash import keccak
 from eth_abi import encode
 
-from ..data_io.base_exporter import MerkleTreeExporter
-from ..data_io.base_importer import MerkleTreeImporter
-from ..data_io.dto import Leaf, LeafValueDTO, MerkleTreeDTO
-from .binary import BinaryTree
-from .exceptions import MerkleTreeValidationFailed, ValueNotFoundInTree
+from merkle_zeppelin.binary import BinaryTree
+from merkle_zeppelin.data_io.base_exporter import MerkleTreeExporter
+from merkle_zeppelin.data_io.base_importer import MerkleTreeImporter
+from merkle_zeppelin.data_io.dto import Leaf, LeafValueDTO, MerkleTreeDTO
+from merkle_zeppelin.exceptions import MerkleTreeValidationFailed, ValueNotFoundInTree
 
 
 def keccak256(v: bytes) -> bytes:

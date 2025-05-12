@@ -11,8 +11,7 @@ class BinaryTree(ABC, Generic[T]):
         self._build_tree()
 
     @abstractmethod
-    def _calculate_parent_value(self, left_child: T, right_child: T) -> T:
-        ...
+    def _calculate_parent_value(self, left_child: T, right_child: T) -> T: ...
 
     @property
     def _inner_nodes_number(self) -> int:
