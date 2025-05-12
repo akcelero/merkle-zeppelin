@@ -1,5 +1,16 @@
-Copy code
 # merkle-zeppelin
+
+[![CI/CD](https://github.com/akcelero/merkle-zeppelin/actions/workflows/run-tests.yaml/badge.svg?query=branch%3Amaster)](https://github.com/akcelero/merkle-zeppelin/actions)
+[![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)](https://github.com/pre-commit/pre-commit)
+
+[![PyPI Version](https://img.shields.io/pypi/v/merkle-zeppelin.svg)](https://pypi.org/project/merkle-zeppelin/)
+![PyPI - Status](https://img.shields.io/pypi/status/merkle-zeppelin)
+![PyPI - Downloads](https://img.shields.io/pypi/dm/merkle-zeppelin)
+
+[![Python Versions](https://img.shields.io/pypi/pyversions/merkle-zeppelin.svg)](https://pypi.org/project/merkle-zeppelin/)
+[![License](https://img.shields.io/pypi/l/merkle-zeppelin.svg)](https://github.com/akcelero/merkle-zeppelin/blob/main/LICENSE)
+
+
 A Merkle Tree library aligned with OpenZeppelin's implementation standards.
 
 ### What's the purpose of Merkle Tree
